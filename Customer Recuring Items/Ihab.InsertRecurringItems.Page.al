@@ -5,7 +5,14 @@ pageextension 50823 "Ihab Insert Recurring Items" extends "Sales Order"
 {
     layout
     {
-        // Add changes to page layout here
+        addafter("Due Date")
+        {
+            field("Max Delivery Date1"; Rec."Max Delivery Date1")
+            {
+                ApplicationArea = All;
+                Caption = 'Ihab Max. Delivery Date';
+            }
+        }
     }
 
     actions
@@ -35,6 +42,21 @@ pageextension 50823 "Ihab Insert Recurring Items" extends "Sales Order"
 
             }
         }
+        addafter("Ihab Insert Recurring Items")
+        {
+            action(name)
+            {
+                Caption = 'GetMaxDeliveryDate';
+                ApplicationArea = All;
+                Image = Action;
+                trigger OnAction()
+                begin
+                    Message(Format(Rec."Max Delivery Date1"));
+                end;
+            }
+        }
+
+
     }
     local procedure InsertSalesLine(var LastLineNb: Integer; CustemorRecurringItems: Record "Customer Recurring Item")
     var
@@ -73,4 +95,6 @@ pageextension 50823 "Ihab Insert Recurring Items" extends "Sales Order"
 
     var
         myInt: Integer;
+        SalesHeader: Record "Sales Header";
+        SalesInvoiceHeader: Record "Sales Invoice Header";
 }

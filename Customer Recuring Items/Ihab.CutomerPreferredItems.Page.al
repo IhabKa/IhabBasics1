@@ -20,12 +20,6 @@ pageextension 50822 "Ihab Customer Preferred Items" extends "Customer Card"
                 Image = AbsenceCalendar;
                 RunObject = Page "Customer Recurring Items";
                 RunPageLink = "Customer No." = field("No.");
-                /*trigger OnAction()
-                var
-                    CustomerRecurringItem: Page "Customer Recurring Items";
-                begin
-                    CustomerRecurringItem.Run();
-                end;*/
             }
         }
     }

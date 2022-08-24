@@ -31,6 +31,41 @@ table 50820 "Customer Recurring Item"
                     Rec."Unit Of Measure Code" := Item."Sales Unit of Measure";
                 end
             end;
+
+            trigger OnLookup()
+            var
+                Item: Record Item;
+                TempItem: Record Item temporary;
+                CustomerRecurringItem: Record "Customer Recurring Item";
+            begin
+                if Item.FindSet() then begin
+                    repeat
+                        TempItem.Init();
+                        TempItem."No." := Item."No.";
+                        TempItem.Description := Item.Description;
+                        if (CustomerRecurringItem.Get(Rec."Customer No.", Item."No.")) then
+                            TempItem.Blocked := true;
+                        TempItem.Insert();
+
+                    until Item.Next() = 0
+                end;
+                if (TempItem.FindFirst()) then;
+                if Page.RunModal(Page::"Ihab Item Selection", TempItem) = Action::LookupOK then
+                    if (TempItem.FindSet()) then
+                        repeat
+                            if TempItem.Blocked then begin
+                                if not CustomerRecurringItem.Get(Rec."Customer No.", TempItem."No.") then begin
+                                    CustomerRecurringItem.Init();
+                                    CustomerRecurringItem.Validate("Customer No.", Rec."Customer No.");
+                                    CustomerRecurringItem.Validate("Item No.", TempItem."No.");
+                                    CustomerRecurringItem.Insert();
+                                end;
+                            end else
+                                if CustomerRecurringItem.Get(Rec."Customer No.", TempItem."No.") then
+                                    CustomerRecurringItem.Delete();
+
+                        until TempItem.Next() = 0;
+            end;
         }
         field(3; Description; Text[100])
         {
@@ -49,6 +84,7 @@ table 50820 "Customer Recurring Item"
             Caption = 'Quantity';
             DataClassification = ToBeClassified;
         }
+
     }
 
     keys
@@ -57,6 +93,13 @@ table 50820 "Customer Recurring Item"
         {
             Clustered = true;
         }
+    }
+
+    fieldgroups
+    {
+        fieldgroup(DropDown; "Item No.", Description)
+        { }
+
     }
 
     var
