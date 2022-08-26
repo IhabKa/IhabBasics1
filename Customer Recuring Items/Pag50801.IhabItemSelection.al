@@ -9,6 +9,7 @@ page 50825 "Ihab Item Selection"
     SourceTableTemporary = true;
     LinksAllowed = false;
     DeleteAllowed = false;
+    InsertAllowed = false;
 
     layout
     {
